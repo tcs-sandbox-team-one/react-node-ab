@@ -22,6 +22,10 @@ metadata:
     app.openshift.io/runtime: {{ .Values.runtime }}
     {{- end}}
 spec:
+  volumes:
+    - name: test-vol
+      persistentVolumeClaim:
+        claimName: test-pvc
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -46,6 +50,9 @@ spec:
             - name: http
               containerPort: {{ .Values.image.port }}
               protocol: TCP
+          volumeMounts:
+            - mountPath: "/tmp/data"
+              name: test-vol
           livenessProbe:
             httpGet:
               path: /
